@@ -9,7 +9,6 @@ OBJECTS=$(SRCS:%.asm=%)
 all: $(OBJECTS)
 
 %: %.o
-	mkdir build
 	$(LNK) $(OBJECTS).o -o build/keylogger
 
 %.o: %.asm

