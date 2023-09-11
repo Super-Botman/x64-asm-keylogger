@@ -1,6 +1,6 @@
 # fully x64 ASM keylogger
 
-### /!\ this is for educational purpose and non-malicious purposes only, any others use is prohibited /!\
+### /!\ this is for educational purpose only, any others use is prohibited /!\
 
 ## Docs
 [input struct](https://www.kernel.org/doc/Documentation/input/input.txt)
