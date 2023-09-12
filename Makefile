@@ -4,15 +4,15 @@ LNK=ld
 CFLAGS= -f elf64
 
 SRCS := $(wildcard src/*.asm)
-OBJECTS=$(SRCS:%.asm=%)
+OBJECTS=$(SRCS:%.asm=%.o)
 
-all: $(OBJECTS)
+all: $(OBJECTS) link clean 
 
-%: %.o
-	$(LNK) $(OBJECTS).o -o build/keylogger
+link: $(OBJECTS)
+	$(LNK) $(OBJECTS) -o build/keylogger
 
 %.o: %.asm
 	$(CC) $(CFLAGS) $< -o $@ 
 
 clean:
-	rm -rf *.o
+	rm -rf src/*.o
