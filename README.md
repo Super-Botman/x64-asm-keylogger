@@ -2,6 +2,13 @@
 
 ### /!\ this is for educational purpose only, any others use is prohibited /!\
 
+## TABLE OF CONTENTS
+1. [Usage](#usage)
+  1.1 [Compilation](#compilation)
+  1.2 [Run](#run)
+  1.3 [Kill the keylogger](#kill-the-keylogger)
+2. [Docs](#docs)
+
 ## Usage
 
 ### Compilation
