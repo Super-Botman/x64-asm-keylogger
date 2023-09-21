@@ -3,10 +3,11 @@
 ### /!\ this is for educational purpose only, any others use is prohibited /!\
 
 ## TABLE OF CONTENTS
+
 1. [Usage](#usage)
-  1.1 [Compilation](#compilation)
-  1.2 [Run](#run)
-  1.3 [Kill the keylogger](#kill-the-keylogger)
+   1. [Compilation](#compilation)
+   2. [Run](#run)
+   3. [Kill the keylogger](#kill-the-keylogger)
 2. [Docs](#docs)
 
 ## Usage
@@ -17,7 +18,7 @@ make
 ```
 
 ### Run
-```
+```bash
 sudo build/keylogger
 ```
 
@@ -26,7 +27,7 @@ you first have to find the PID of the process, for that the keylloger create a d
 ![pid screenshot](screenshots/keylogger_pid.png)
 
 then umount it and kill it
-```
+```bash
 sudo umount /proc/<pid>
 sudo killall -9 build/keylogger
 ```
