@@ -2,15 +2,40 @@
 
 ### /!\ this is for educational purpose only, any others use is prohibited /!\
 
+## TABLE OF CONTENTS
+1. [Usage](#usage)
+  1.1 [Compilation](#compilation)
+  1.2 [Run](#run)
+  1.3 [Kill the keylogger](#kill-the-keylogger)
+2. [Docs](#docs)
+
+## Usage
+
+### Compilation
+```bash
+make
+```
+
+### Run
+```
+sudo build/keylogger
+```
+
+### Kill the keylogger
+you first have to find the PID of the process, for that the keylloger create a dir with pid like this:
+![pid screenshot](screenshots/keylogger_pid.png)
+
+then umount it and kill it
+```
+sudo umount /proc/<pid>
+sudo killall -9 build/keylogger
+```
+
 ## Docs
-[input struct](https://www.kernel.org/doc/Documentation/input/input.txt)
-
-[sockaddr_in struct](https://www.gta.ufrj.br/ensino/eel878/sockets/sockaddr_inman.html)
-
-[opcodes](https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/)
-
-[man](https://man7.org/linux/man-pages/)
-
-[input events codes](https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h)
+[man for all the syscalls](https://man7.org/linux/man-pages/)
 
 [asm doc](https://www.tutorialspoint.com/assembly_programming)
+
+[calltable](https://x64.syscall.sh/)
+
+[linux source code (easier than github official repo)](https://elixir.bootlin.com/linux/latest/source)
