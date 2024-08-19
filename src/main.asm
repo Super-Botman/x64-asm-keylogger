@@ -1,4 +1,4 @@
-%include "hide_process.asm"
+; %include "hide_process.asm"
 %include "find_event_file.asm"
 %include "capture_keys.asm"
 

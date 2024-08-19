@@ -1,10 +1,10 @@
 CC=nasm
 LNK=ld
 
-CFLAGS= -f elf64 -i ./src
+CFLAGS= -f elf64 -F dwarf -g -i ./src
 
 SRCS := $(wildcard src/main.asm)
-OBJECTS=$(SRCS:main.asm=main.o)
+OBJECTS = $(SRCS:main.asm=main.o)
 
 all: $(OBJECTS) link clean 
 

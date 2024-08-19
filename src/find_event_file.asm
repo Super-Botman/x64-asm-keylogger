@@ -31,12 +31,6 @@ find_event_file:
   mov rdx, event_codes
   syscall
 
-  mov rax, 1
-  mov rdi, 1
-  mov rsi, event_codes
-  mov rdx, 1 
-  syscall
-
   mov rax, 3
   mov rdi, r10
   syscall
@@ -44,8 +38,8 @@ find_event_file:
   test rax, rax
   js error
 
-  cmp byte [event_codes], 0x0
-  jz .loop
+  cmp byte [event_codes], 0x2
+  jna .loop
 
   mov rax, source+1 
   ret
