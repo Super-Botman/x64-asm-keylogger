@@ -27,7 +27,7 @@ You can start a nc server with this command
 ```bash
 nc -klnvp 1337
 ```
-and the keylogger will automaticelly connect to it and send instantely the keys typed, I did'nt implemented some args customisation for port/ip so for now it's only connect to localhost:1337
+and the keylogger will automaticelly connect to it and send instantely the keys typed, I didn't implemented some args customisation for port/ip so for now it's only connect to localhost:1337
 
 ### Kill the keylogger
 you first have to find the PID of the process, for that the keylloger create a dir with pid like this:
