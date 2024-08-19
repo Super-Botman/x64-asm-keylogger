@@ -3,12 +3,12 @@
 ### /!\ this is for educational purpose only, any others use is prohibited /!\
 
 ## TABLE OF CONTENTS
-
-1. [Usage](#usage)
-   1. [Compilation](#compilation)
-   2. [Run](#run)
-   3. [Kill the keylogger](#kill-the-keylogger)
-2. [Docs](#docs)
+* [Usage](#usage)
+    * [Compilation](#compilation)
+    * [Run](#run)
+    * [Server](#server)
+    * [Kill the keylogger](#kill-the-keylogger)
+* [Docs](#docs)
 
 ## Usage
 
@@ -21,6 +21,13 @@ make
 ```bash
 sudo build/keylogger
 ```
+
+### Server
+You can start a nc server with this command
+```bash
+nc -klnvp 1337
+```
+and the keylogger will automaticelly connect to it and send instantely the keys typed, I did'nt implemented some args customisation for port/ip so for now it's only connect to localhost:1337
 
 ### Kill the keylogger
 you first have to find the PID of the process, for that the keylloger create a dir with pid like this:
