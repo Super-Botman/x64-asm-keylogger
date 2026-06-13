@@ -1,4 +1,4 @@
-# fully x64 ASM keylogger
+# x64 ASM keylogger
 
 ### /!\ this is for educational purpose only, any others use is prohibited /!\
 
